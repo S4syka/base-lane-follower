@@ -79,8 +79,8 @@ class CameraReaderNode(DTROS):
         if(msg.data == "Slow Down"):
             rospy.loginfo(f"[{self.node_name}] sign detected: {msg.data}, slowing down for 10s")
             # scale speeds down (e.g. to 20%):
-            self.base_speed  = self._base_speed_orig  * 0.5
-            self.curve_speed = self._curve_speed_orig * 0.5
+            self.base_speed  = self._base_speed_orig  * 0.2
+            self.curve_speed = self._curve_speed_orig * 0.2
 
             # sleep channel and change speeds
             # self._sign_subscriber.unregister()

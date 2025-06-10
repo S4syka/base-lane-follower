@@ -13,6 +13,8 @@ from sign_detectooor import SignDetector
 
 
 class CoordinatorNode(DTROS):
+    last_time = 0
+    
     road_signs = {
         20: "Stop",
         24: "Stop",
@@ -25,6 +27,7 @@ class CoordinatorNode(DTROS):
     }
 
     def __init__(self):
+        self.last_time = 0
         super(CoordinatorNode, self).__init__(node_name='coordinator_node', node_type=NodeType.VISUALIZATION)
 
         self.bridge = CvBridge()
@@ -66,12 +69,13 @@ class CoordinatorNode(DTROS):
         detections = result["detections"]
 
         cv2.imshow("right side feed", cropped_frame)
-        last_time = rospy.Time.now() - rospy.Duration(20)
-        for d in detections:
-            if (rospy.Time.now() - last_time).to_sec() > 10:
+
+        for d in detections: 
+            if (rospy.Time.now().to_sec() - self.last_time) > 10:
                 self._signPublisher.publish(self.road_signs.get(d.tag_id, "Unknown"))
-                last_time = rospy.Time.now()
-            rospy.loginfo(f"Detected tag ID: {d.tag_id}")
+                self.last_time = rospy.Time.now().to_sec()
+                rospy.loginfo(f"Detected tag ID: {d.tag_id}")
+                rospy.loginfo(f"published : {d.tag_id}, {rospy.Time.now().to_sec()}; {self.last_time}")
 
         cv2.waitKey(1)
 
